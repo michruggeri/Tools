@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.7
+#!/usr/bin/env python3
 
 
 """
@@ -17,7 +17,7 @@ values = ("7","8","9","10","Jack","Queen","King","Ace")
 jokers = ("Joker",)
 
 
-def samecolor(a,b):
+def samecolor(a:str,b:str) -> bool:
   """
   Checks if two seeds are different, and of the same color.
   """
@@ -31,11 +31,11 @@ class Card:
   """
   Class representing a card, with suit and value
   """
-  def __init__(self,suit,value):
+  def __init__(self,suit:str,value:str) -> None:
     self.suit  = suit
     self.value = value
 
-  def __str__(self):
+  def __str__(self) -> str:
     if self.value == "Joker" :
       return f"{self.value}!"
     else:
@@ -46,33 +46,31 @@ class Pile:
   """
   Class defining a pile of cards
   """
-  def __init__(self):
+  def __init__(self) -> None:
     self.cards=[]
-    #self.cards=set()
     self.ncards = len(self.cards)
 
-  def __str__(self):
+  def __str__(self) -> str:
     return f"Pile of {self.ncards} cards"
 
-  def printcards(self):
+  def printcards(self) -> None:
     print(self)
     for i in self.cards:
       print(i)
 
-  def shuffle(self):
+  def shuffle(self) -> None:
     print("Shuffling...")
     random.shuffle(self.cards)
 
-  def add(self,card):
+  def add(self,card:Card) -> None:
     self.cards.append(card)
-    #self.cards.add(card)
     self.ncards = len(self.cards)
 
-  def discard(self,card):
+  def discard(self,card:Card) -> None:
     self.cards.remove(card)
     self.ncards = len(self.cards)
 
-  def remove_pairs(self):
+  def remove_pairs(self) -> None:
     to_rem = set() 
     for i in self.cards:
       for j in self.cards:
@@ -86,7 +84,7 @@ class Deck(Pile):
   """
   Class defining a deck of cards
   """
-  def __init__(self):
+  def __init__(self) -> None:
     self.cards = []
     for i in suits:
       for j in values:
@@ -97,7 +95,7 @@ class Deck(Pile):
         self.cards.append(c)
     self.ncards = len(self.cards)
 
-  def deal(self):
+  def deal(self) -> (Pile,Pile):
     self.shuffle()
     hand1 = Pile()
     hand2 = Pile()
@@ -109,7 +107,7 @@ class Deck(Pile):
     return hand1,hand2
 
 
-def main():
+def main() -> None:
   """
   Main function: the actual game
   """
