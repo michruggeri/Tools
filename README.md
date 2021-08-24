@@ -6,3 +6,6 @@ Script for data analysis of generic QMC data. Takes input of the form \<data\> \
 
 ## gen\_det.py
 Generates binary strings used to define determinants to be used in QMCPack wave function files when using multi determinant wave functions.
+
+## babanuki.py
+A simple baba-nuki/old maid game (see [Wikipedia](https://en.wikipedia.org/wiki/Old_maid_(card_game)) for more information).
