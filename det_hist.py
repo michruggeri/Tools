@@ -1,4 +1,3 @@
-# pylint: disable=invalid-name
 #!/usr/bin/env python3
 
 """
@@ -16,7 +15,7 @@ if len(sys.argv) == 1:
 else:
     filename = sys.argv[1]
 
-flag = ""
+flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
 while flag not in ("r", "c"):
     flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
 
