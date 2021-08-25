@@ -73,6 +73,7 @@ class Pile:
         """
         self.cards.append(card)
         self.ncards = len(self.cards)
+        random.shuffle(self.cards)
 
     def discard(self, card: Card) -> None:
         """
@@ -80,6 +81,7 @@ class Pile:
         """
         self.cards.remove(card)
         self.ncards = len(self.cards)
+        random.shuffle(self.cards)
 
     def remove_pairs(self) -> None:
         """
