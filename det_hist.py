@@ -5,13 +5,15 @@ import matplotlib.pyplot as plt
 import sys
 
 if len(sys.argv) == 1:
-    print("Insert the wavefunction file name.")
-    exit()
+    filename=input("Insert the wavefunction file name: ")
+else:
+    filename=sys.argv[1]
+
 flag = ""
 while flag != "r" and flag != "c":
     flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
 
-wf_file = minidom.parse(sys.argv[1])
+wf_file = minidom.parse(filename)
 determinants = wf_file.getElementsByTagName("ci")
 dets = []
 vals = []
