@@ -104,9 +104,10 @@ class Deck(Pile):
         for i in suits:
             for j in values:
                 card = Card(i, j)
+                self.cards.append(card)
         for i in jokers:
             card = Card("X", i)
-        self.cards.append(card)
+            self.cards.append(card)
         self.ncards = len(self.cards)
 
     def deal(self) -> Tuple[Pile, Pile]:
