@@ -12,6 +12,10 @@ from typing import Tuple,List
 
 
 def initialize(args:List[str]) -> Tuple[minidom.NodeList,float,str]:
+    """
+    Reads determinants and cutoff, asking for the input file if needed;
+    asks if the coeffients are real or complex.
+    """
     if len(sys.argv) == 1:
         filename = input("Insert the wavefunction file name: ")
     else:
@@ -28,6 +32,9 @@ def initialize(args:List[str]) -> Tuple[minidom.NodeList,float,str]:
 
 
 def histo_real(determinants:minidom.NodeList,cutoff:float) -> plt.figure: 
+    """
+    Builds the histogram (real case).
+    """
     dets = []
     vals = []
     for det in determinants:
@@ -50,6 +57,9 @@ def histo_real(determinants:minidom.NodeList,cutoff:float) -> plt.figure:
 
 
 def histo_complex(determinants:minidom.NodeList,cutoff:float) -> plt.figure: 
+    """
+    Builds the histogram (complex case).
+    """
     dets = []
     vals_r = []
     vals_i = []
@@ -84,10 +94,14 @@ def histo_complex(determinants:minidom.NodeList,cutoff:float) -> plt.figure:
     axs[1].axhline(y=1, color="steelblue", linestyle="--")
     axs[1].axhline(y=-1, color="steelblue", linestyle="--")
 
-    return fig
+    return fig 
 
 
 def print_fig(args: list) -> None:
+    """
+    Print the histogram, either on screen or on the output file
+    designated as an argument.
+    """
     if len(args) > 2:
         plot_file = args[2]
         if plot_file[-3:] in ("png", "pdf", "eps", "svg"):
@@ -100,6 +114,9 @@ def print_fig(args: list) -> None:
 
 
 def main() -> None:
+    """
+    Main functions, calls initialize, the figure builder and print_fig.
+    """
     determinants,cutoff,flag = initialize(sys.argv)
     if flag == "r":
        fig = histo_real(determinants,cutoff)
