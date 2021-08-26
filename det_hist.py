@@ -8,51 +8,57 @@ histograms of the CI coefficients
 import sys
 from xml.dom import minidom
 import matplotlib.pyplot as plt
+from typing import Tuple,List
 
 
-if len(sys.argv) == 1:
-    filename = input("Insert the wavefunction file name: ")
-else:
-    filename = sys.argv[1]
-
-flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
-while flag not in ("r", "c"):
-    flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
-
-wf_file = minidom.parse(filename)
-determinants = wf_file.getElementsByTagName("ci")
-dets = []
-vals = []
-vals_r = []
-vals_i = []
-for det in determinants:
-    dets.append(len(dets))
-    # dets.append(int(det.attributes["id"].value[2:]))
-    if flag == "r":
-        vals.append(float(det.attributes["coeff"].value))
-    elif flag == "c":
-        vals_r.append(float(det.attributes["coeff_real"].value))
-        vals_i.append(float(det.attributes["coeff_imag"].value))
+def initialize(args:List[str]) -> Tuple[minidom.NodeList,float,str]:
+    if len(sys.argv) == 1:
+        filename = input("Insert the wavefunction file name: ")
     else:
-        print("AAAAAAAAAAA")
-cutoff = float(wf_file.getElementsByTagName("detlist")[0].attributes["cutoff"].value)
-if flag == "r":
+        filename = sys.argv[1]
+
+    flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
+    while flag not in ("r", "c"):
+        flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
+
+    wf_file = minidom.parse(filename)
+    determinants = wf_file.getElementsByTagName("ci")
+    cutoff = float(wf_file.getElementsByTagName("detlist")[0].attributes["cutoff"].value)
+    return determinants,cutoff,flag
+
+
+def histo_real(determinants:minidom.NodeList,cutoff:float) -> plt.figure: 
+    dets = []
+    vals = []
+    for det in determinants:
+        dets.append(len(dets))
+        vals.append(float(det.attributes["coeff"].value))
     ymax = max(vals) * 1.1
     ymin = min(min(vals) * 1.1, -0.1)
-    plt.bar(dets, vals, color="mediumblue")
-    plt.xticks(range(len(dets)))
-    plt.xlabel("Determinant")
-    plt.ylabel(r"CI Coefficient")
-    plt.ylim([ymin, ymax])
-    plt.axhline(y=0, color="k")
-    plt.axhline(y=cutoff, color="red")
-    plt.axhline(y=-cutoff, color="red")
-    plt.axhline(y=1, color="steelblue", linestyle="--")
-    plt.axhline(y=-1, color="steelblue", linestyle="--")
-elif flag == "c":
+    fig,ax = plt.subplots()
+    ax.bar(dets, vals, color="mediumblue")
+    ax.set_xticks(range(len(dets)))
+    ax.set_xlabel("Determinant")
+    ax.set_ylabel(r"CI Coefficient")
+    ax.set_ylim([ymin, ymax])
+    ax.axhline(y=0, color="k")
+    ax.axhline(y=cutoff, color="red")
+    ax.axhline(y=-cutoff, color="red")
+    ax.axhline(y=1, color="steelblue", linestyle="--")
+    ax.axhline(y=-1, color="steelblue", linestyle="--")
+    return fig
+
+
+def histo_complex(determinants:minidom.NodeList,cutoff:float) -> plt.figure: 
+    dets = []
+    vals_r = []
+    vals_i = []
+    for det in determinants:
+        dets.append(len(dets))
+        vals_r.append(float(det.attributes["coeff_real"].value))
+        vals_i.append(float(det.attributes["coeff_imag"].value))
     ymax = max(max(vals_r) * 1.1, max(vals_i) * 1.1)
     ymin = min(min(min(vals_r) * 1.1, -0.1), min(min(vals_i) * 1.1, -0.1))
-
     fig, axs = plt.subplots(2, constrained_layout=True)
     fig.suptitle("CI coefficients")
 
@@ -77,15 +83,32 @@ elif flag == "c":
     axs[1].axhline(y=-cutoff, color="red")
     axs[1].axhline(y=1, color="steelblue", linestyle="--")
     axs[1].axhline(y=-1, color="steelblue", linestyle="--")
-else:
-    print("CCCCCCCCCC")
 
-if len(sys.argv) > 2:
-    plot_file = sys.argv[2]
-    if plot_file[-3:] in ("png", "pdf", "eps", "svg"):
-        print(f"Saving plot in {plot_file}")
-        plt.savefig(plot_file)
+    return fig
+
+
+def print_fig(args: list) -> None:
+    if len(args) > 2:
+        plot_file = args[2]
+        if plot_file[-3:] in ("png", "pdf", "eps", "svg"):
+            print(f"Saving plot in {plot_file}")
+            plt.savefig(plot_file)
+        else:
+            print("Invalid format (png, pdf, eps or svg)")
     else:
-        print("Invalid format (png, pdf, eps or svg)")
-else:
-    plt.show()
+       plt.show()
+
+
+def main() -> None:
+    determinants,cutoff,flag = initialize(sys.argv)
+    if flag == "r":
+       fig = histo_real(determinants,cutoff)
+    elif flag == "c":
+       fig = histo_complex(determinants,cutoff)
+    else:
+       raise NameError("Irregular Real/Complex flag. This should not be happening.")
+    print_fig(sys.argv)
+
+    
+if __name__ == "__main__":
+    main()
