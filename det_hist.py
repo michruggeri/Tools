@@ -7,19 +7,19 @@ histograms of the CI coefficients
 
 import sys
 from xml.dom import minidom
+from typing import Tuple, List
 import matplotlib.pyplot as plt
-from typing import Tuple,List
 
 
-def initialize(args:List[str]) -> Tuple[minidom.NodeList,float,str]:
+def initialize(args: List[str]) -> Tuple[minidom.NodeList, float, str]:
     """
     Reads determinants and cutoff, asking for the input file if needed;
     asks if the coeffients are real or complex.
     """
-    if len(sys.argv) == 1:
+    if len(args) == 1:
         filename = input("Insert the wavefunction file name: ")
     else:
-        filename = sys.argv[1]
+        filename = args[1]
 
     flag = input("Are your coefficients [R]eal or [C]omplex? ").lower()
     while flag not in ("r", "c"):
@@ -27,11 +27,13 @@ def initialize(args:List[str]) -> Tuple[minidom.NodeList,float,str]:
 
     wf_file = minidom.parse(filename)
     determinants = wf_file.getElementsByTagName("ci")
-    cutoff = float(wf_file.getElementsByTagName("detlist")[0].attributes["cutoff"].value)
-    return determinants,cutoff,flag
+    cutoff = float(
+        wf_file.getElementsByTagName("detlist")[0].attributes["cutoff"].value
+    )
+    return determinants, cutoff, flag
 
 
-def histo_real(determinants:minidom.NodeList,cutoff:float) -> plt.figure: 
+def histo_real(determinants: minidom.NodeList, cutoff: float) -> None:
     """
     Builds the histogram (real case).
     """
@@ -42,21 +44,19 @@ def histo_real(determinants:minidom.NodeList,cutoff:float) -> plt.figure:
         vals.append(float(det.attributes["coeff"].value))
     ymax = max(vals) * 1.1
     ymin = min(min(vals) * 1.1, -0.1)
-    fig,ax = plt.subplots()
-    ax.bar(dets, vals, color="mediumblue")
-    ax.set_xticks(range(len(dets)))
-    ax.set_xlabel("Determinant")
-    ax.set_ylabel(r"CI Coefficient")
-    ax.set_ylim([ymin, ymax])
-    ax.axhline(y=0, color="k")
-    ax.axhline(y=cutoff, color="red")
-    ax.axhline(y=-cutoff, color="red")
-    ax.axhline(y=1, color="steelblue", linestyle="--")
-    ax.axhline(y=-1, color="steelblue", linestyle="--")
-    return fig
+    plt.bar(dets, vals, color="mediumblue")
+    plt.xticks(range(len(dets)))
+    plt.xlabel("Determinant")
+    plt.ylabel(r"CI Coefficient")
+    plt.ylim([ymin, ymax])
+    plt.axhline(y=0, color="k")
+    plt.axhline(y=cutoff, color="red")
+    plt.axhline(y=-cutoff, color="red")
+    plt.axhline(y=1, color="steelblue", linestyle="--")
+    plt.axhline(y=-1, color="steelblue", linestyle="--")
 
 
-def histo_complex(determinants:minidom.NodeList,cutoff:float) -> plt.figure: 
+def histo_complex(determinants: minidom.NodeList, cutoff: float) -> None:
     """
     Builds the histogram (complex case).
     """
@@ -94,10 +94,8 @@ def histo_complex(determinants:minidom.NodeList,cutoff:float) -> plt.figure:
     axs[1].axhline(y=1, color="steelblue", linestyle="--")
     axs[1].axhline(y=-1, color="steelblue", linestyle="--")
 
-    return fig 
 
-
-def print_fig(args: list) -> None:
+def print_fig(args: List[str]) -> None:
     """
     Print the histogram, either on screen or on the output file
     designated as an argument.
@@ -110,22 +108,22 @@ def print_fig(args: list) -> None:
         else:
             print("Invalid format (png, pdf, eps or svg)")
     else:
-       plt.show()
+        plt.show()
 
 
 def main() -> None:
     """
     Main functions, calls initialize, the figure builder and print_fig.
     """
-    determinants,cutoff,flag = initialize(sys.argv)
+    determinants, cutoff, flag = initialize(sys.argv)
     if flag == "r":
-       fig = histo_real(determinants,cutoff)
+        histo_real(determinants, cutoff)
     elif flag == "c":
-       fig = histo_complex(determinants,cutoff)
+        histo_complex(determinants, cutoff)
     else:
-       raise NameError("Irregular Real/Complex flag. This should not be happening.")
+        raise NameError("Irregular Real/Complex flag. This should not be happening.")
     print_fig(sys.argv)
 
-    
+
 if __name__ == "__main__":
     main()
