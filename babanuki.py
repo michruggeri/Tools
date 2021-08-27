@@ -17,8 +17,8 @@ jokers = ("Joker",)
 
 def samecolor(seed_a: str, seed_b: str) -> bool:
     """
-  Checks if two seeds are different, and of the same color.
-  """
+    Checks if two seeds are different, and of the same color.
+    """
     return {seed_a, seed_b} == {"Hearts", "Diamonds"} or {seed_a, seed_b} == {
         "Clubs",
         "Spades",
