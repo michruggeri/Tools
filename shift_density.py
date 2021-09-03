@@ -2,7 +2,7 @@
 """
 Script to shift an electronic density in xsf format by a 3d vector.
 """
-from typing import Tuple, List, IO
+from typing import Tuple, List, IO, Any
 import numpy
 import numpy.typing as npt
 
@@ -15,7 +15,7 @@ class Atoms:
     at_coord: list[np.array], the 3d atomic coordinates
     """
 
-    def __init__(self, nat: int, at_types: List[str], at_coord: npt.NDArray) -> None:
+    def __init__(self, nat: int=1, at_types: List[Any]=[1], at_coord: npt.NDArray = numpy.array([[0,0,0]])) -> None:
         self.nat = nat
         self.at_types = []
         for at_type in at_types:

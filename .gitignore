@@ -1,3 +1,4 @@
 *.dat
 *.x
 *.o
+__pycache__
