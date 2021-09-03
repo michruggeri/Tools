@@ -12,7 +12,7 @@ Generates a histogram of the CI coefficients taken from a QMCPack wave function 
 
 
 ## shift\_density.py
-Takes an electronic density file in xsf format and shifts the density and the atomic position by an arbitrary vector (in three dimensions, with periodic boundary conditions).
+Takes an electronic density file in xsf format (for vesta, xcrysden) and shifts the electron density and the atomic positions by an arbitrary vector (in three dimensions, with periodic boundary conditions).
 
 ## babanuki.py
 A simple baba-nuki/old maid game (see [Wikipedia](https://en.wikipedia.org/wiki/Old_maid_(card_game)) for more information).
