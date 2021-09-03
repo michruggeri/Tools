@@ -15,7 +15,12 @@ class Atoms:
     at_coord: list[np.array], the 3d atomic coordinates
     """
 
-    def __init__(self, nat: int=1, at_types: List[Any]=[1], at_coord: npt.NDArray = numpy.array([[0,0,0]])) -> None:
+    def __init__(
+        self,
+        nat: int = 1,
+        at_types: List[Any] = [1],
+        at_coord: npt.NDArray = numpy.array([[0, 0, 0]]),
+    ) -> None:
         self.nat = nat
         self.at_types = []
         for at_type in at_types:
@@ -23,14 +28,16 @@ class Atoms:
         self.at_coord = numpy.empty_like(at_coord)
         self.at_coord[:] = at_coord
 
-    def shift_coord(self, shift: npt.NDArray) -> None:
+    def shift_coord(self, shift: npt.NDArray = numpy.array([0, 0, 0])) -> None:
         """
-        Moves the atomic coordinates by yhe vector shift
+        Moves the atomic coordinates by the vector shift
         """
         for i in range(3):
             self.at_coord[i] += shift[i]
 
-    def add_atom(self, at_type: str, at_coord: npt.NDArray) -> None:
+    def add_atom(
+        self, at_type: Any = 1, at_coord: npt.NDArray = numpy.array([[0, 0, 0]])
+    ) -> None:
         """
         Adds an atom to the Atom list
         """
@@ -54,7 +61,7 @@ def read_input() -> Tuple[npt.NDArray, str, str]:
 
 
 def read_data(
-    filein: str,
+    filein: str = "",
 ) -> Tuple[npt.NDArray, Atoms, npt.NDArray, npt.NDArray, List[str]]:
     """
     Reads from the filein file information on the physical system and the density.
@@ -100,30 +107,32 @@ def read_data(
 
 
 def get_shift(
-    delta: npt.NDArray, nind: npt.NDArray, cell: npt.NDArray
+    delta: npt.NDArray = numpy.array([0, 0, 0]),
+    nind: npt.NDArray = numpy.array([1, 1, 1]),
+    cell: npt.NDArray = numpy.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
 ) -> List[int]:
     """
     Takes the real space shift and converts it in discrete increments for the three directions
     """
     rotated = delta @ numpy.linalg.inv(cell)
-    print("rotated:\n",rotated)
-    print("nind:\n",nind)
-    dr=[]
+    print("rotated:\n", rotated)
+    print("nind:\n", nind)
+    dr = []
     # dx = int(Delta[0]//(cell[0][0]/nind[0]))
     # dy = int(Delta[1]//(cell[1][1]/nind[1]))
     # dz = int(Delta[2]//(cell[2][2]/nind[2]))
     for i in range(3):
         dr.append(int(rotated[i] * nind[i]))
-    print("dr:\n",dr)
+    print("dr:\n", dr)
     return dr
 
 
 def write_head(
-    cell: npt.NDArray,
-    atoms: Atoms,
-    nind: npt.NDArray,
-    start_coord: npt.NDArray,
     file_out: IO,
+    cell: npt.NDArray = numpy.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+    atoms: Atoms = Atoms(),
+    nind: npt.NDArray = numpy.array([1, 1, 1]),
+    start_coord: npt.NDArray = numpy.array([0, 0, 0]),
 ) -> None:
     """
     Writes the initial part of the output file.
@@ -187,7 +196,7 @@ def main() -> None:
         count += 1
 
     with open(fileout, "w", encoding="utf-8") as file_out:
-        write_head(cell, atoms, nind, start_coord, file_out)
+        write_head(file_out, cell, atoms, nind, start_coord)
         count = 0
         file_out.write("       ")
         for i in range(int(nind[2])):
