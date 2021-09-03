@@ -10,5 +10,9 @@ Generates binary strings used to define determinants to be used in QMCPack wave 
 ## det\_hist.py
 Generates a histogram of the CI coefficients taken from a QMCPack wave function or optimization file. Can print the histogram on screen, or generate a pdf, eps, png or svg figure. Works for either real or complex coefficients.
 
+
+## shift\_density.py
+Takes an electronic density file in xsf format and shifts the density and the atomic position by an arbitrary vector (in three dimensions, with periodic boundary conditions).
+
 ## babanuki.py
 A simple baba-nuki/old maid game (see [Wikipedia](https://en.wikipedia.org/wiki/Old_maid_(card_game)) for more information).
