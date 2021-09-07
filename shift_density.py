@@ -89,7 +89,7 @@ def read_data(
             cursor += 1
     atoms = Atoms(nat, at_types, at_coord)
     cursor = content.index("BEGIN_DATAGRID_3D_density") + 1
-    nind = numpy.zeros(3)
+    nind = numpy.zeros(3).astype(int)
     for i in range(3):
         nind[i] = int(content[cursor])
         cursor += 1
@@ -102,7 +102,8 @@ def read_data(
             cell[i][j] = float(content[cursor])
             cursor += 1
     ending = content.index("END_DATAGRID_3D_density")
-    values = content[cursor:ending]
+    values = numpy.array(content[cursor:ending])
+    values = numpy.reshape(values,tuple(nind))
     return cell, atoms, nind, start_coord, values
 
 
@@ -118,9 +119,6 @@ def get_shift(
     print("rotated:\n", rotated)
     print("nind:\n", nind)
     dr = []
-    # dx = int(Delta[0]//(cell[0][0]/nind[0]))
-    # dy = int(Delta[1]//(cell[1][1]/nind[1]))
-    # dz = int(Delta[2]//(cell[2][2]/nind[2]))
     for i in range(3):
         dr.append(int(rotated[i] * nind[i]))
     print("dr:\n", dr)
@@ -178,22 +176,32 @@ def main() -> None:
     """
     delta, filein, fileout = read_input()
     cell, atoms, nind, start_coord, values = read_data(filein)
+    nindm1 = nind - 1
     for i in range(atoms.nat):
         for j in range(3):
             atoms.at_coord[i][j] += delta[j]
     dr = get_shift(delta, nind, cell)
     print(dr)
-    data = numpy.zeros((int(nind[0]), int(nind[1]), int(nind[2])))
-    count = 0
-    for value in values:
-        ix = int(count % nind[0])
-        iy = int(count // nind[0])
-        iz = int(count // (nind[0] * nind[1]))
-        ix = int((ix + dr[0]) % nind[0])
-        iy = int((iy + dr[1]) % nind[1])
-        iz = int((iz + dr[2]) % nind[2])
-        data[iz][iy][ix] = value
-        count += 1
+    data = numpy.zeros(tuple(nindm1))
+    for i in range(nindm1[2]):
+        for j in range(nindm1[1]):
+            for k in range(nindm1[0]):
+                ix = int((k + dr[0]) % (nindm1[0]))
+                iy = int((j + dr[1]) % (nindm1[1]))
+                iz = int((i + dr[2]) % (nindm1[2]))
+                data[iz][iy][ix] = values[i][j][k]
+    
+    density = numpy.zeros(tuple(nind),dtype=float)
+    density[:nindm1[2],:nindm1[1],:nindm1[0]] = data[:,:,:] # volume copy
+    density[        -1,:nindm1[1],:nindm1[0]] = data[0,:,:] # face copies
+    density[:nindm1[2],        -1,:nindm1[0]] = data[:,0,:]
+    density[:nindm1[2],:nindm1[1],        -1] = data[:,:,0]
+    density[        -1,        -1,:nindm1[0]] = data[0,0,:] # edge copies
+    density[        -1,:nindm1[1],        -1] = data[0,:,0]
+    density[:nindm1[2],        -1,        -1] = data[:,0,0]
+    density[        -1,        -1,        -1] = data[0,0,0] # corner copy
+    density.shape = tuple(nind)
+
 
     with open(fileout, "w", encoding="utf-8") as file_out:
         write_head(file_out, cell, atoms, nind, start_coord)
@@ -202,7 +210,7 @@ def main() -> None:
         for i in range(int(nind[2])):
             for j in range(int(nind[1])):
                 for k in range(int(nind[0])):
-                    file_out.write(f"{data[i,j,k]:10.8f}")
+                    file_out.write(f"{density[i][j][k]:10.8f}")
                     count += 1
                     if count == 4:
                         file_out.write("\n       ")
