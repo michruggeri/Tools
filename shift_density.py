@@ -51,7 +51,7 @@ def read_input() -> Tuple[npt.NDArray, str, str]:
     Reads the file name of the original density and the shift.
     Also builds the name of the output file.
     """
-    filename = input("Insert the input file name: ")
+    filename = input("Insert the input file name: ").strip()
     shifts = input("Insert DX, DY and DZ:  ").split()
     delta = numpy.zeros(3)
     for i in range(3):
