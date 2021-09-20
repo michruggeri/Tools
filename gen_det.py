@@ -10,14 +10,14 @@ determinants will be stored in the determinants.dat file.
 """
 
 
-def convert_integer_list(integer_list: list) -> str:
+def convert_to_list(in_list: list) -> str:
     """
-    This function takes a list of integers and returns it as a single
+    This function takes a list and returns it as a single
     uninterrupted string
     """
     converted = ""
-    for integer in integer_list:
-        converted += str(integer)
+    for inp in in_list:
+        converted += str(inp)
     return converted
 
 
@@ -32,7 +32,7 @@ def build_excitation(state: list, hole: int, particle: int) -> str:
     excitation = state[:]
     excitation[hole] = 0
     excitation[particle] = 1
-    excitation_str = convert_integer_list(excitation)
+    excitation_str = convert_to_list(excitation)
     if sum(state) != sum(excitation):
         print("Warning: the total number of electrons changed; is this what you want?")
         excitation_str += "     !"
@@ -56,7 +56,7 @@ def main() -> None:
     ground_state = [
         1 if n < number_of_electrons else 0 for n in range(number_of_states)
     ]
-    print(f"GS: {convert_integer_list(ground_state)}")
+    print(f"GS: {convert_to_list(ground_state)}")
     with open("determinants.dat", "w") as output_file:
         while True:
             try:
@@ -77,7 +77,7 @@ def main() -> None:
                     continue
                 state_str = build_excitation(ground_state, hole, particle)
                 print(state_str)
-                output_file.write(f"{state_str}\n")
+                output_file.write(f"<ci id=\"{hole}-{particle}\" coeff=\"1\" alpha=\"{state_str}\" beta=\"{convert_to_list(ground_state)}\"/>\n")
             except ValueError:
                 break
             except IndexError:
