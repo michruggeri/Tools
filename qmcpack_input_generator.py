@@ -25,23 +25,23 @@ class InpBuilder(tk.Tk):
         substeps  = tk.StringVar()
 
         self.make_title()
-        self.data_entry("Run name:",run_name,True)
-        self.data_entry("Run number:",run_num)
-        self.data_entry("System file:",sys_file)
-        self.data_entry("Hamiltonian file:",ham_file)
-        self.data_entry("Wave function file:",wf_file)
+        self.data_entry("Run name:",run_name,"test",True)
+        self.data_entry("Run number:",run_num,"0")
+        self.data_entry("System file:",sys_file,".ptcl.xml")
+        self.data_entry("Hamiltonian file:",ham_file,".ham.xml")
+        self.data_entry("Wave function file:",wf_file,".wfs.xml")
 
         self.method_label = ttk.Label(self, text="QMC method:")
         self.method_label.pack(pack_opt,pady=(10,0))
         self.method_menu = ttk.OptionMenu(self,method,self.methods[0],*self.methods)
         self.method_menu.pack(pack_opt)
 
-        self.data_entry("Blocks:",n_blocks)
-        self.data_entry("Steps:",n_steps)
-        self.data_entry("Substeps:",substeps)
-        self.data_entry("Warm up steps:",warmup)
-        self.data_entry("Timestep:",timestep)
-        self.data_entry("Walkers:",walkers)
+        self.data_entry("Blocks:",n_blocks,"10")
+        self.data_entry("Steps:",n_steps,"100")
+        self.data_entry("Substeps:",substeps,"1")
+        self.data_entry("Warmup steps:",warmup,"10")
+        self.data_entry("Timestep:",timestep,"1.0")
+        self.data_entry("Walkers:",walkers,"1")
 
         self.data['name'] = run_name
         self.data['num']  = run_num
@@ -62,12 +62,14 @@ class InpBuilder(tk.Tk):
 
     def make_title(self):
         self.label = ttk.Label(self,text='Input generator for QMCPack', font = ('Helvetica',14),padding=5).pack()
-        self.label2= ttk.Label(self,text='The files with information on the system and\nwave function are' 
-             ' assumed to be created with the pw2qmcpack script!', font = ('Helvetica',12),padding=5).pack()
+        self.label2= ttk.Label(self,text='The files with information on the system and wave function are' 
+             ' assumed to be created with the pw2qmcpack script!', font = ('Helvetica',12),padding=5, wraplength=500).pack()
         self.title("QMCPack input generator")
 
-    def data_entry(self,descr,variable,toFocus=False):
+    def data_entry(self,descr,variable,default=None,toFocus=False):
         label = ttk.Label(self, text=descr)
+        if default:
+            variable.set(default)
         label.pack(pack_opt,pady=(10,0))
         entry = ttk.Entry(self, textvariable=variable)
         entry.pack(pack_opt)
@@ -129,10 +131,10 @@ class InpBuilder(tk.Tk):
                 fileout.write(f'      <parameter name="timestep"   >  {timestep:4}  </parameter>\n')
                 fileout.write(f'      <parameter name="walkers"    >  {walkers:4}  </parameter>\n')
                 fileout.write(f'      <parameter name="usedrift"   >   no   </parameter>\n')
-                fileout.write(f'      <parameter name="MinMethod"  >   OneShiftOnly </parameter>\n')
-                fileout.write(f'      <parameter name="minwalkers" >          0.01  </parameter>\n')
-                fileout.write(f'      <parameter name="samples"            >  9999  </parameter>\n')
-                fileout.write(f'      <parameter name="stepsbetweensamples">     1  </parameter>\n')
+                fileout.write(f'      <parameter name="MinMethod"  >   OneShiftOnly  </parameter>\n')
+                fileout.write(f'      <parameter name="minwalkers" >           0.01  </parameter>\n')
+                fileout.write(f'      <parameter name="samples"             >  9999  </parameter>\n')
+                fileout.write(f'      <parameter name="stepsbetweensamples" >     1  </parameter>\n')
                 fileout.write(f'      <cost name="energy"              > 0.7 </cost>\n')
                 fileout.write(f'      <cost name="unreweightedvariance"> 0.3 </cost>\n')
                 fileout.write(f'      <cost name="reweightedvariance"  > 0.0 </cost>\n')
