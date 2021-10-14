@@ -63,10 +63,12 @@ class InpBuilder(tk.Tk):
         self.button.pack(pack_opt,pady=(20,10))
 
     def make_title(self):
-        self.label = ttk.Label(self,text='Input generator for QMCPack', font = ('Helvetica',14),padding=5).pack()
+        self.label = ttk.Label(self,text='Input generator for QMCPack', font = ('Helvetica',14,'bold'),padding=5).pack()
         self.label2= ttk.Label(self,text='The files with information on the system and wave function are' 
-             ' assumed to be created with the pw2qmcpack script!', font = ('Helvetica',12),padding=5, wraplength=500).pack()
+             ' assumed to be created with the pw2qmcpack script!', font = ('Helvetica',12),padding=5, wraplength=600).pack()
         self.title("QMCPack input generator")
+        self.bind('<Control-q>', lambda x:self.destroy())
+        self.bind('<Control-w>', lambda x:self.destroy())
 
     def data_entry(self,descr,variable,default=None,toFocus=False):
         label = ttk.Label(self, text=descr)
@@ -116,12 +118,12 @@ class InpBuilder(tk.Tk):
                 fileout.write(f'  </qmc>\n')
             elif method=="Diffusion Monte Carlo":
                 fileout.write(f'  <qmc method="dmc" move="pbyp" checkpoint="0">\n')
-                fileout.write(f'    <parameter name="warmupsteps">  {warmup:4}  </parameter>\n')
-                fileout.write(f'    <parameter name="blocks"     >  {blocks:4}  </parameter>\n')
-                fileout.write(f'    <parameter name="steps"      >  {steps:4}  </parameter>\n')
-                fileout.write(f'    <parameter name="substeps"   >  {substeps:4}  </parameter> \n')
-                fileout.write(f'    <parameter name="timestep"   >  {timestep:4}  </parameter>\n')
-                fileout.write(f'    <parameter name="walkers"    >  {walkers:4}  </parameter>\n')
+                fileout.write(f'    <parameter name="warmupsteps"   >  {warmup:4}  </parameter>\n')
+                fileout.write(f'    <parameter name="blocks"        >  {blocks:4}  </parameter>\n')
+                fileout.write(f'    <parameter name="steps"         >  {steps:4}  </parameter>\n')
+                fileout.write(f'    <parameter name="substeps"      >  {substeps:4}  </parameter> \n')
+                fileout.write(f'    <parameter name="timestep"      >  {timestep:4}  </parameter>\n')
+                fileout.write(f'    <parameter name="targetwalkers" >  {walkers:4}  </parameter>\n')
                 fileout.write(f'  </qmc>\n')
             elif method=="Wave function optimization":
                 fileout.write(f'  <loop max="10">\n')
