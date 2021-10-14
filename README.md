@@ -15,6 +15,3 @@ Takes an electronic density file in xsf format (for vesta, xcrysden) and shifts 
 
 ## qmcpack\_input\_generator.py
 A GUI (made with tkinter) to generate basic input files with QMCPack. Please check [QMCPack's documentation](https://qmcpack.readthedocs.io/en/develop/index.html) to see the meaning of the entries, and other keywords to may be needed in your input files.
-
-## babanuki.py
-A simple baba-nuki/old maid game (see [Wikipedia](https://en.wikipedia.org/wiki/Old_maid_(card_game)) for more information).
